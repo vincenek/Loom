@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Loom: A meditative digital space for reflection">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Loom | Digital Meditation</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e6e6e6;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        #visual-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.7;
+        }
+        
+        #content-container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef, #dee2e6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 500px;
+            margin: 0 auto;
+            font-style: italic;
+        }
+        
+        #chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 18px;
+            animation: fadeIn 0.5s ease;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background: rgba(25, 55, 109, 0.5);
+            border-bottom-left-radius: 5px;
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: rgba(65, 105, 225, 0.3);
+            border-bottom-right-radius: 5px;
+        }
+        
+        #input-container {
+            display: flex;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        #user-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.5);
+        }
+        
+        #send-btn {
+            background: #4169e1;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        #send-btn:hover {
+            background: #5a7dee;
+            transform: translateY(-2px);
+        }
+        
+        #send-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 0;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .control-btn:hover {
+            background: rgba(65, 105, 225, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: rgba(25, 55, 109, 0.5);
+            padding: 15px;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e6e6e6;
+            margin: 0 2px;
+            opacity: 0.4;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+        
+        .timestamp {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            #content-container {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="visual-container"></div>
+    
+    <div id="content-container">
+        <header>
+            <h1>LOOM</h1>
+            <p class="tagline">A meditative space for reflection and calm</p>
+        </header>
+        
+        <div id="chat-container">
+            <div id="chat-messages">
+                <div class="message bot-message">
+                    Hello. I'm Loom. How are you feeling today?
+                    <div class="timestamp">Just now</div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div id="input-container">
+                <input type="text" id="user-input" placeholder="Share your thoughts...">
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="reset-btn">
+                <span>🔄</span> Reset Conversation
+            </button>
+            <button class="control-btn" id="sound-btn">
+                <span>🔊</span> Sound On
+            </button>
+            <button class="control-btn" id="visual-btn">
+                <span>🌈</span> Visuals On
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Visuals using Canvas API
+        const canvas = document.createElement('canvas');
+        const visualContainer = document.getElementById('visual-container');
+        visualContainer.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas dimensions
+        function resizeCanvas() {
+            canvas.width = visualContainer.clientWidth;
+            canvas.height = visualContainer.clientHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Particle system for visuals
+        class Particle {
+            constructor() {
+                this.reset();
+                this.size = Math.random() * 8 + 2;
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.alpha = Math.random() * 0.5 + 0.1;
+                this.color = `hsla(${Math.random() * 360}, 70%, 60%, ${this.alpha})`;
+                this.life = Math.random() * 300 + 100;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+                
+                // Add some organic movement with Perlin-like noise
+                this.vx += (Math.random() - 0.5) * 0.1;
+                this.vy += (Math.random() - 0.5) * 0.1;
+                
+                // Constrain velocity
+                this.vx = Math.max(Math.min(this.vx, 1), -1);
+                this.vy = Math.max(Math.min(this.vy, 1), -1);
+                
+                // Boundary check
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height || this.life <= 0) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                
+                // Draw connections to nearby particles
+                for (let particle of particles) {
+                    if (particle !== this) {
+                        const dx = this.x - particle.x;
+                        const dy = this.y - particle.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(this.x, this.y);
+                            ctx.lineTo(particle.x, particle.y);
+                            ctx.strokeStyle = `hsla(${Math.random() * 360}, 60%, 70%, ${0.1 * (1 - dist/150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Create particles
+        const particles = [];
+        const particleCount = 50;
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        // Animation loop
+        function animate() {
+            // Semi-transparent background for motion blur effect
+            ctx.fillStyle = 'rgba(10, 15, 30, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update and draw particles
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Chatbot functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const soundBtn = document.getElementById('sound-btn');
+        const visualBtn = document.getElementById('visual-btn');
+        const typingIndicator = document.querySelector('.typing-indicator');
+        
+        // Sound setup
+        let audioContext;
+        let oscillator;
+        let soundOn = false;
+        
+        function initSound() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 220;
+                gainNode.gain.value = 0.02;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                
+                // Slowly modulate frequency for ambient effect
+                setInterval(() => {
+                    oscillator.frequency.setValueAtTime(
+                        200 + Math.sin(Date.now() / 5000) * 50, 
+                        audioContext.currentTime
+                    );
+                }, 100);
+                
+                // Start muted
+                toggleSound();
+            } catch (e) {
+                console.log("Web Audio API not supported:", e);
+                soundBtn.style.display = 'none';
+            }
+        }
+        
+        function toggleSound() {
+            soundOn = !soundOn;
+            soundBtn.innerHTML = soundOn ? '<span>🔊</span> Sound On' : '<span>🔇</span> Sound Off';
+            
+            if (audioContext) {
+                if (soundOn) {
+                    audioContext.resume();
+                } else {
+                    audioContext.suspend();
+                }
+            }
+        }
+        
+        // Visual toggle
+        let visualsOn = true;
+        
+        function toggleVisuals() {
+            visualsOn = !visualsOn;
+            visualBtn.innerHTML = visualsOn ? '<span>🌈</span> Visuals On' : '<span>🌑</span> Visuals Off';
+            visualContainer.style.opacity = visualsOn ? '0.7' : '0';
+        }
+        
+        // Chat responses
+        const responses = {
+            greeting: [
+                "Hello. I'm Loom. How are you feeling today?",
+                "Welcome to this space. What's on your mind?",
+                "I'm here to listen. How are you doing?"
+            ],
+            positive: [
+                "That's wonderful to hear. Joy is a beautiful state to inhabit.",
+                "I can feel your positivity radiating. Hold onto that light.",
+                "Moments like these are precious. What's bringing you this happiness?",
+                "Your contentment is palpable. Savor this feeling."
+            ],
+            negative: [
+                "I'm here with you in this moment. Difficult feelings are part of the journey.",
+                "This too shall pass. Would you like to share more about what's troubling you?",
+                "I sense your discomfort. Remember, even storms eventually clear.",
+                "Thank you for sharing that. What do you need right now?"
+            ],
+            reflective: [
+                "What do you think is the source of that feeling?",
+                "How does that resonate with your deeper self?",
+                "Our emotions are like clouds passing through the sky of consciousness.",
+                "Can you sit with that feeling without judgment for a moment?",
+                "Notice how that thought arises and passes. What remains?"
+            ],
+            existential: [
+                "We're stardust contemplating itself. Isn't that remarkable?",
+                "Existence precedes essence. What does that mean to you?",
+                "In the vastness of the cosmos, this moment is uniquely yours.",
+                "The present is all that truly exists. How are you experiencing it now?",
+                "What does it mean to be alive in this particular moment?"
+            ],
+            nature: [
+                "Nature moves at its own pace, unconcerned with human worries.",
+                "Imagine roots growing from your feet, connecting you to the earth.",
+                "The changing seasons remind us that nothing is permanent.",
+                "Can you hear the rhythm of your breath, like waves on a shore?"
+            ],
+            default: [
+                "That's interesting. Tell me more.",
+                "I'm listening. Please continue.",
+                "What else comes to mind when you reflect on that?",
+                "How does that make you feel in this moment?",
+                "Let's explore that thought together."
+            ]
+        };
+        
+        // Sentiment analysis (simple pattern matching)
+        function analyzeSentiment(text) {
+            text = text.toLowerCase();
+            
+            const positiveWords = ['good', 'great', 'happy', 'joy', 'love', 'excited', 'calm', 'peace', 'grateful'];
+            const negativeWords = ['bad', 'sad', 'angry', 'stressed', 'anxious', 'depressed', 'tired', 'hurt', 'lonely'];
+            
+            let positiveCount = 0;
+            let negativeCount = 0;
+            
+            positiveWords.forEach(word => {
+                if (text.includes(word)) positiveCount++;
+            });
+            
+            negativeWords.forEach(word => {
+                if (text.includes(word)) negativeCount++;
+            });
+            
+            if (positiveCount > negativeCount) return 'positive';
+            if (negativeCount > positiveCount) return 'negative';
+            return 'neutral';
+        }
+        
+        // Generate bot response
+        function generateResponse(userMessage) {
+            const sentiment = analyzeSentiment(userMessage);
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Sometimes ask reflective questions
+            if (Math.random() > 0.7) {
+                return {
+                    text: responses.reflective[Math.floor(Math.random() * responses.reflective.length)],
+                    timestamp
+                };
+            }
+            
+            // Occasionally go existential
+            if (Math.random() > 0.85) {
+                return {
+                    text: responses.existential[Math.floor(Math.random() * responses.existential.length)],
+                    timestamp
+                };
+            }
+            
+            // Sometimes talk about nature
+            if (Math.random() > 0.8) {
+                return {
+                    text: responses.nature[Math.floor(Math.random() * responses.nature.length)],
+                    timestamp
+                };
+            }
+            
+            // Base response on sentiment
+            if (sentiment === 'positive') {
+                return {
+                    text: responses.positive[Math.floor(Math.random() * responses.positive.length)],
+                    timestamp
+                };
+            }
+            
+            if (sentiment === 'negative') {
+                return {
+                    text: responses.negative[Math.floor(Math.random() * responses.negative.length)],
+                    timestamp
+                };
+            }
+            
+            return {
+                text: responses.default[Math.floor(Math.random() * responses.default.length)],
+                timestamp
+            };
+        }
+        
+        // Add message to chat
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+            messageDiv.innerHTML = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Simulate typing
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+        
+        // Handle user message
+        function handleUserMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            addMessage(`${message}<div class="timestamp">${timestamp}</div>`, true);
+            
+            userInput.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Generate and show bot response after delay
+            setTimeout(() => {
+                hideTyping();
+                const response = generateResponse(message);
+                addMessage(`${response.text}<div class="timestamp">${response.timestamp}</div>`, false);
+            }, 1500 + Math.random() * 1500);
+        }
+        
+        // Reset conversation
+        function resetConversation() {
+            chatMessages.innerHTML = '';
+            addMessage("Let's begin anew. How are you feeling in this moment?");
+        }
+        
+        // Event listeners
+        sendBtn.addEventListener('click', handleUserMessage);
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleUserMessage();
+            }
+        });
+        
+        resetBtn.addEventListener('click', resetConversation);
+        soundBtn.addEventListener('click', toggleSound);
+        visualBtn.addEventListener('click', toggleVisuals);
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            initSound();
+            
+            // Add initial bot message after a pause
+            setTimeout(() => {
+                addMessage("This space is yours. There's no rush. Just breathe.");
+            }, 3000);
+        });
+        
+        // PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+        
+        // Create manifest
+        const manifest = {
+            "name": "Loom",
+            "short_name": "Loom",
+            "description": "A meditative space for reflection and calm",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#1a1a2e",
+            "theme_color": "#1a1a2e",
+            "icons": [
+                {
+                    "src": "icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "icon-512.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        
+        // For GitHub Pages, you'll need to create actual icon files and a service-worker.js file
+        // This code is ready to be placed in your index.html file
+    </script>
+</body>
+</html>
