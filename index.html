@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Loom: A meditative digital space for reflection and mindfulness">
+    <meta name="description" content="Loom: A mindful digital space for reflection and meditation">
     <meta name="theme-color" content="#0a192f">
     <title>Loom | Mindful Digital Space</title>
     <link rel="manifest" href="/manifest.webmanifest">
@@ -19,6 +19,7 @@
             --border-radius: 20px;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             --card-bg: rgba(17, 34, 64, 0.7);
+            --tab-active: rgba(100, 255, 218, 0.1);
         }
         
         * {
@@ -61,29 +62,6 @@
             grid-template-columns: 1fr;
             grid-template-rows: auto 1fr auto;
             gap: 20px;
-        }
-        
-        @media (min-width: 768px) {
-            #app-container {
-                grid-template-columns: 300px 1fr;
-                grid-template-rows: auto 1fr auto;
-            }
-            
-            header {
-                grid-column: 1 / -1;
-            }
-            
-            #sidebar {
-                grid-row: 2;
-            }
-            
-            #main-content {
-                grid-row: 2;
-            }
-            
-            footer {
-                grid-column: 1 / -1;
-            }
         }
         
         /* Header Styles */
@@ -137,112 +115,54 @@
             font-weight: 300;
         }
         
-        /* Sidebar Styles */
-        #sidebar {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(100, 255, 218, 0.1);
+        /* Navigation Tabs */
+        .tabs {
             display: flex;
-            flex-direction: column;
-            gap: 25px;
-            height: 100%;
-        }
-        
-        .widget {
-            background: rgba(10, 25, 47, 0.5);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .widget-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        /* Meditation Timer */
-        #meditation-timer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        #timer-display {
-            font-size: 3.5rem;
-            font-weight: 300;
-            font-variant-numeric: tabular-nums;
-            color: var(--light);
-            margin: 10px 0;
-        }
-        
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-            width: 100%;
             justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
         }
         
-        .timer-btn {
-            background: rgba(100, 255, 218, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
+        .tab {
+            padding: 12px 24px;
             border-radius: 30px;
-            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            color: var(--lighter);
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
-        }
-        
-        .timer-btn:hover {
-            background: rgba(100, 255, 218, 0.2);
-        }
-        
-        /* Mood Tracker */
-        .mood-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        
-        .mood-option {
-            background: rgba(100, 255, 218, 0.05);
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            border-radius: 10px;
-            padding: 15px 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: 8px;
         }
         
-        .mood-option:hover, .mood-option.active {
-            background: rgba(100, 255, 218, 0.15);
+        .tab.active {
+            background: var(--tab-active);
             border-color: var(--accent);
+            color: var(--accent);
         }
         
-        .mood-icon {
-            font-size: 1.8rem;
+        .tab:hover:not(.active) {
+            background: rgba(100, 255, 218, 0.05);
         }
         
-        /* Main Content Styles */
-        #main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: 100%;
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Chat Section */
         #chat-container {
             flex-grow: 1;
             display: flex;
@@ -253,6 +173,7 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             border: 1px solid rgba(100, 255, 218, 0.1);
+            height: 100%;
         }
         
         #chat-messages {
@@ -272,11 +193,6 @@
             line-height: 1.6;
             position: relative;
             font-size: 1.1rem;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         .bot-message {
@@ -345,12 +261,68 @@
             box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
         }
         
-        #send-btn:active {
-            transform: translateY(1px);
+        /* Meditation Section */
+        .meditation-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .meditation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .meditation-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #timer-display {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+            color: var(--light);
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .timer-btn {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 30px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .timer-btn:hover {
+            background: rgba(100, 255, 218, 0.2);
         }
         
         /* Breathing Exercise */
-        #breathing-exercise {
+        #breathing-container {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
@@ -361,6 +333,7 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
+            height: 100%;
         }
         
         #breathing-circle {
@@ -372,7 +345,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 10px auto;
+            margin: 20px auto;
             position: relative;
             overflow: hidden;
             transition: transform 0.5s ease;
@@ -403,6 +376,72 @@
         .breathing-controls {
             display: flex;
             gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Journal Section */
+        .journal-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .journal-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #journal-text {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: var(--lighter);
+            font-size: 1.1rem;
+            resize: none;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        #journal-text:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+        }
+        
+        .journal-btn {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+        
+        .journal-btn:hover {
+            background: #7dffe3;
+            transform: translateY(-2px);
         }
         
         /* Footer */
@@ -477,16 +516,6 @@
         @media (max-width: 767px) {
             #app-container {
                 padding: 15px;
-                grid-template-rows: auto auto 1fr auto;
-            }
-            
-            #sidebar {
-                grid-row: 2;
-                height: auto;
-            }
-            
-            #main-content {
-                grid-row: 3;
             }
             
             header {
@@ -495,6 +524,15 @@
             
             h1 {
                 font-size: 2.2rem;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+                font-size: 0.9rem;
             }
             
             #breathing-circle {
@@ -507,11 +545,6 @@
                 padding: 15px;
                 font-size: 1rem;
             }
-        }
-        
-        /* Hide elements when not needed */
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
@@ -527,58 +560,24 @@
             <p class="tagline">A mindful space for reflection, meditation, and digital serenity</p>
         </header>
         
-        <aside id="sidebar">
-            <div class="widget">
-                <h3 class="widget-title">⏱ Meditation Timer</h3>
-                <div id="meditation-timer">
-                    <div id="timer-display">05:00</div>
-                    <div class="timer-controls">
-                        <button class="timer-btn" id="start-timer">Start</button>
-                        <button class="timer-btn" id="reset-timer">Reset</button>
-                    </div>
-                </div>
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="chat">
+                <span>💬</span> Mindful Chat
             </div>
-            
-            <div class="widget">
-                <h3 class="widget-title">😌 Current Mood</h3>
-                <div class="mood-options">
-                    <div class="mood-option" data-mood="calm">
-                        <div class="mood-icon">😌</div>
-                        <div>Calm</div>
-                    </div>
-                    <div class="mood-option" data-mood="happy">
-                        <div class="mood-icon">😊</div>
-                        <div>Happy</div>
-                    </div>
-                    <div class="mood-option" data-mood="thoughtful">
-                        <div class="mood-icon">🤔</div>
-                        <div>Thoughtful</div>
-                    </div>
-                    <div class="mood-option" data-mood="anxious">
-                        <div class="mood-icon">😰</div>
-                        <div>Anxious</div>
-                    </div>
-                    <div class="mood-option" data-mood="tired">
-                        <div class="mood-icon">😴</div>
-                        <div>Tired</div>
-                    </div>
-                    <div class="mood-option" data-mood="neutral">
-                        <div class="mood-icon">😐</div>
-                        <div>Neutral</div>
-                    </div>
-                </div>
+            <div class="tab" data-tab="meditation">
+                <span>⏱️</span> Meditation
             </div>
-            
-            <div class="widget">
-                <h3 class="widget-title">💎 Insights</h3>
-                <div id="insights">
-                    <p>"The present moment is the only moment available to us."</p>
-                    <p style="margin-top: 15px;">"Breathe. Let go. And remind yourself that this very moment is the only one you know you have for sure."</p>
-                </div>
+            <div class="tab" data-tab="breathing">
+                <span>🌬️</span> Breathing
             </div>
-        </aside>
+            <div class="tab" data-tab="journal">
+                <span>📓</span> Journal
+            </div>
+        </div>
         
-        <main id="main-content">
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-content active">
             <div id="chat-container">
                 <div id="chat-messages">
                     <div class="message bot-message">
@@ -598,20 +597,82 @@
                     <button id="send-btn">Send <span>➤</span></button>
                 </div>
             </div>
-            
-            <div id="breathing-exercise">
-                <h3 class="widget-title">🌬 Breathing Exercise</h3>
+        </div>
+        
+        <!-- Meditation Tab -->
+        <div id="meditation-tab" class="tab-content">
+            <div class="meditation-container">
+                <div class="meditation-header">
+                    <div class="meditation-title">
+                        <span>⏱️</span> Meditation Timer
+                    </div>
+                </div>
+                
+                <div id="timer-display">05:00</div>
+                
+                <div class="timer-controls">
+                    <button class="timer-btn" id="start-timer">Start</button>
+                    <button class="timer-btn" id="pause-timer">Pause</button>
+                    <button class="timer-btn" id="reset-timer">Reset</button>
+                </div>
+                
+                <div class="meditation-content">
+                    <p>Find a comfortable position, close your eyes, and focus on your breath. Let thoughts come and go without judgment.</p>
+                    <p style="margin-top: 15px;">"Meditation is not about stopping thoughts, but recognizing that we are more than our thoughts."</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breathing Tab -->
+        <div id="breathing-tab" class="tab-content">
+            <div class="breathing-container">
+                <div class="meditation-header">
+                    <div class="meditation-title">
+                        <span>🌬️</span> Breathing Exercise
+                    </div>
+                </div>
+                
                 <p>Follow the rhythm to calm your mind and body</p>
                 <div id="breathing-circle">
                     <div id="breathing-text">Breathe In</div>
                     <div class="circle-pulse"></div>
                 </div>
+                
                 <div class="breathing-controls">
                     <button class="timer-btn" id="start-breathing">Start</button>
                     <button class="timer-btn" id="stop-breathing">Stop</button>
                 </div>
+                
+                <div class="breathing-instructions">
+                    <p>Inhale for 4 seconds → Hold for 4 seconds → Exhale for 6 seconds → Hold for 2 seconds</p>
+                    <p style="margin-top: 15px;">This technique helps activate your parasympathetic nervous system, promoting relaxation.</p>
+                </div>
             </div>
-        </main>
+        </div>
+        
+        <!-- Journal Tab -->
+        <div id="journal-tab" class="tab-content">
+            <div class="journal-container">
+                <div class="journal-header">
+                    <div class="journal-title">
+                        <span>📓</span> Mindfulness Journal
+                    </div>
+                </div>
+                
+                <textarea id="journal-text" placeholder="What's on your mind today? What are you grateful for?"></textarea>
+                
+                <button class="journal-btn" id="save-journal">Save Reflection</button>
+                
+                <div class="journal-tips">
+                    <p>Journaling prompts:</p>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>What emotions am I feeling right now?</li>
+                        <li>What am I grateful for today?</li>
+                        <li>What lesson did I learn recently?</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         
         <footer>
             <p>Loom is designed to help you find moments of peace in your digital life</p>
@@ -726,19 +787,41 @@
         const sendBtn = document.getElementById('send-btn');
         const typingIndicator = document.querySelector('.typing-indicator');
         const startTimerBtn = document.getElementById('start-timer');
+        const pauseTimerBtn = document.getElementById('pause-timer');
         const resetTimerBtn = document.getElementById('reset-timer');
         const timerDisplay = document.getElementById('timer-display');
-        const moodOptions = document.querySelectorAll('.mood-option');
-        const breathingCircle = document.getElementById('breathing-circle');
-        const breathingText = document.getElementById('breathing-text');
         const startBreathingBtn = document.getElementById('start-breathing');
         const stopBreathingBtn = document.getElementById('stop-breathing');
+        const saveJournalBtn = document.getElementById('save-journal');
+        const journalText = document.getElementById('journal-text');
         const installBtn = document.getElementById('install-btn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Tab Navigation
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show active content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
         
         // Meditation Timer
         let timerInterval;
         let timerRunning = false;
         let timerSeconds = 300; // 5 minutes
+        let timerPaused = false;
         
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -750,7 +833,7 @@
             if (timerRunning) return;
             
             timerRunning = true;
-            startTimerBtn.textContent = 'Pause';
+            timerPaused = false;
             
             timerInterval = setInterval(() => {
                 timerSeconds--;
@@ -759,58 +842,32 @@
                 if (timerSeconds <= 0) {
                     clearInterval(timerInterval);
                     timerRunning = false;
-                    startTimerBtn.textContent = 'Start';
+                    playCompletionSound();
                     addMessage("Your meditation session is complete. How do you feel now?", false);
-                    // Play completion sound
-                    if (audioContext && soundOn) {
-                        playCompletionSound();
-                    }
                 }
             }, 1000);
+        }
+        
+        function pauseTimer() {
+            if (timerRunning && !timerPaused) {
+                clearInterval(timerInterval);
+                timerPaused = true;
+            } else if (timerRunning && timerPaused) {
+                startTimer();
+            }
         }
         
         function resetTimer() {
             clearInterval(timerInterval);
             timerRunning = false;
+            timerPaused = false;
             timerSeconds = 300;
             timerDisplay.textContent = formatTime(timerSeconds);
-            startTimerBtn.textContent = 'Start';
         }
         
-        startTimerBtn.addEventListener('click', () => {
-            if (timerRunning) {
-                clearInterval(timerInterval);
-                timerRunning = false;
-                startTimerBtn.textContent = 'Resume';
-            } else {
-                startTimer();
-            }
-        });
-        
+        startTimerBtn.addEventListener('click', startTimer);
+        pauseTimerBtn.addEventListener('click', pauseTimer);
         resetTimerBtn.addEventListener('click', resetTimer);
-        
-        // Mood Tracking
-        moodOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                moodOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                
-                const mood = option.dataset.mood;
-                const moodMap = {
-                    'calm': 'calm and peaceful',
-                    'happy': 'happy and content',
-                    'thoughtful': 'thoughtful and reflective',
-                    'anxious': 'anxious or worried',
-                    'tired': 'tired or fatigued',
-                    'neutral': 'neutral or balanced'
-                };
-                
-                addMessage(`I'm feeling ${moodMap[mood]} right now.`, true);
-                setTimeout(() => {
-                    addMessage(`I appreciate you sharing that. How is your ${mood} state affecting your current thoughts?`, false);
-                }, 1500);
-            });
-        });
         
         // Breathing Exercise
         let breathingInterval;
@@ -861,7 +918,37 @@
         startBreathingBtn.addEventListener('click', startBreathing);
         stopBreathingBtn.addEventListener('click', stopBreathing);
         
-        // Enhanced Chatbot
+        // Journal Saving
+        saveJournalBtn.addEventListener('click', () => {
+            const text = journalText.value.trim();
+            if (!text) {
+                alert('Please write something before saving!');
+                return;
+            }
+            
+            // Save to localStorage
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+            entries.push({
+                id: Date.now(),
+                content: text,
+                date: new Date().toISOString()
+            });
+            
+            localStorage.setItem('journalEntries', JSON.stringify(entries));
+            
+            // Show confirmation
+            alert('Journal entry saved successfully!');
+            journalText.value = '';
+        });
+        
+        // Context-Aware Chatbot
+        const conversationContext = {
+            lastMentioned: '',
+            sentiment: 'neutral',
+            topics: [],
+            mood: 'calm'
+        };
+        
         const responses = {
             greeting: [
                 "Welcome. I'm here to listen without judgment. How are you feeling in this moment?",
@@ -904,6 +991,11 @@
                 "When was the last time you truly listened to the silence between sounds?",
                 "Try gently resting your awareness on the space between your thoughts."
             ],
+            followup: [
+                "Earlier you mentioned {topic}. How does that relate to what you're sharing now?",
+                "I recall you spoke about {topic}. Would you like to explore that further?",
+                "Building on our previous conversation about {topic}, how are you feeling about that now?"
+            ],
             default: [
                 "I'm listening. Please continue.",
                 "What else comes to mind as you reflect on that?",
@@ -913,7 +1005,7 @@
             ]
         };
         
-        // Sentiment analysis
+        // Sentiment analysis with context
         function analyzeSentiment(text) {
             text = text.toLowerCase();
             
@@ -943,11 +1035,43 @@
             return 'neutral';
         }
         
-        // Generate bot response
+        // Extract topics from text
+        function extractTopics(text) {
+            const topics = [];
+            const topicKeywords = [
+                'work', 'family', 'friend', 'relationship', 'health', 'sleep', 
+                'dream', 'future', 'past', 'present', 'nature', 'art', 'music',
+                'meditation', 'breath', 'mind', 'body', 'soul', 'purpose'
+            ];
+            
+            topicKeywords.forEach(keyword => {
+                if (text.includes(keyword) && !topics.includes(keyword)) {
+                    topics.push(keyword);
+                }
+            });
+            
+            return topics;
+        }
+        
+        // Generate context-aware response
         function generateResponse(userMessage) {
             const sentiment = analyzeSentiment(userMessage);
             const now = new Date();
             const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Update conversation context
+            conversationContext.sentiment = sentiment;
+            conversationContext.topics = [...conversationContext.topics, ...extractTopics(userMessage)];
+            
+            // Occasionally reference previous topic
+            if (Math.random() > 0.7 && conversationContext.topics.length > 0) {
+                const randomTopic = conversationContext.topics[Math.floor(Math.random() * conversationContext.topics.length)];
+                const followup = responses.followup[Math.floor(Math.random() * responses.followup.length)];
+                return {
+                    text: followup.replace('{topic}', randomTopic),
+                    timestamp
+                };
+            }
             
             // Sometimes suggest mindfulness
             if (Math.random() > 0.8) {
@@ -1040,7 +1164,7 @@
             setTimeout(() => {
                 hideTyping();
                 const response = generateResponse(message);
-                addMessage(`${response.text}<div class="timestamp">${response.timestamp}</div>`, false);
+                addMessage(`${response.text}<div class="timestamp">${timestamp}</div>`, false);
             }, 1500 + Math.random() * 1500);
         }
         
@@ -1146,36 +1270,6 @@
                     });
             }
         });
-        
-        // Create manifest dynamically
-        const manifest = {
-            "name": "Loom Meditation",
-            "short_name": "Loom",
-            "description": "A mindful space for reflection, meditation, and digital serenity",
-            "start_url": "/",
-            "display": "standalone",
-            "background_color": "#0a192f",
-            "theme_color": "#0a192f",
-            "icons": [
-                {
-                    "src": "icon-192.png",
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": "icon-512.png",
-                    "sizes": "512x512",
-                    "type": "image/png"
-                }
-            ]
-        };
-        
-        // Create manifest link
-        const manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type: 'application/json'}));
-        document.head.appendChild(manifestLink);
     </script>
 </body>
 </html>
