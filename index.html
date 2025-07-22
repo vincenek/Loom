@@ -3,26 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Loom: A meditative digital space for reflection">
-    <meta name="theme-color" content="#1a1a2e">
-    <title>Loom | Digital Meditation</title>
+    <meta name="description" content="Loom: A meditative digital space for reflection and mindfulness">
+    <meta name="theme-color" content="#0a192f">
+    <title>Loom | Mindful Digital Space</title>
     <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%230a192f%22 width=%22100%22 height=%22100%22 rx=%2220%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%23fff%22 opacity=%220.8%22/></svg>">
     <style>
+        :root {
+            --primary: #0a192f;
+            --secondary: #112240;
+            --accent: #64ffda;
+            --light: #ccd6f6;
+            --lighter: #e6f1ff;
+            --transition: all 0.3s ease;
+            --border-radius: 20px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --card-bg: rgba(17, 34, 64, 0.7);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-            color: #e6e6e6;
-            height: 100vh;
+            background: linear-gradient(135deg, var(--primary), #020c1b);
+            color: var(--lighter);
+            min-height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: relative;
+            line-height: 1.6;
         }
         
         #visual-container {
@@ -32,57 +46,213 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            opacity: 0.7;
+            opacity: 0.8;
+            filter: blur(1px);
         }
         
-        #content-container {
+        #app-container {
             position: relative;
             z-index: 10;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
         }
         
+        @media (min-width: 768px) {
+            #app-container {
+                grid-template-columns: 300px 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            header {
+                grid-column: 1 / -1;
+            }
+            
+            #sidebar {
+                grid-row: 2;
+            }
+            
+            #main-content {
+                grid-row: 2;
+            }
+            
+            footer {
+                grid-column: 1 / -1;
+            }
+        }
+        
+        /* Header Styles */
         header {
-            padding: 20px 0;
+            padding: 20px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+            background: rgba(10, 25, 47, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), #4db5ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
         }
         
         h1 {
-            font-size: 3.5rem;
-            font-weight: 300;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #f8f9fa, #e9ecef, #dee2e6);
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, var(--light), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            margin-bottom: 5px;
         }
         
         .tagline {
             font-size: 1.1rem;
             opacity: 0.8;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
-            font-style: italic;
+            font-weight: 300;
+        }
+        
+        /* Sidebar Styles */
+        #sidebar {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: 100%;
+        }
+        
+        .widget {
+            background: rgba(10, 25, 47, 0.5);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .widget-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Meditation Timer */
+        #meditation-timer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        #timer-display {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-variant-numeric: tabular-nums;
+            color: var(--light);
+            margin: 10px 0;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .timer-btn {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 30px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .timer-btn:hover {
+            background: rgba(100, 255, 218, 0.2);
+        }
+        
+        /* Mood Tracker */
+        .mood-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .mood-option {
+            background: rgba(100, 255, 218, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 10px;
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mood-option:hover, .mood-option.active {
+            background: rgba(100, 255, 218, 0.15);
+            border-color: var(--accent);
+        }
+        
+        .mood-icon {
+            font-size: 1.8rem;
+        }
+        
+        /* Main Content Styles */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
         }
         
         #chat-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            background: rgba(10, 15, 30, 0.6);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
         
         #chat-messages {
@@ -91,16 +261,17 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
         
         .message {
             max-width: 80%;
-            padding: 15px;
+            padding: 18px 20px;
             border-radius: 18px;
-            animation: fadeIn 0.5s ease;
-            line-height: 1.5;
+            animation: fadeIn 0.4s ease;
+            line-height: 1.6;
             position: relative;
+            font-size: 1.1rem;
         }
         
         @keyframes fadeIn {
@@ -110,103 +281,181 @@
         
         .bot-message {
             align-self: flex-start;
-            background: rgba(25, 55, 109, 0.5);
+            background: rgba(25, 55, 109, 0.4);
             border-bottom-left-radius: 5px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
         
         .user-message {
             align-self: flex-end;
-            background: rgba(65, 105, 225, 0.3);
+            background: rgba(100, 255, 218, 0.1);
             border-bottom-right-radius: 5px;
+            border: 1px solid rgba(100, 255, 218, 0.15);
         }
         
         #input-container {
             display: flex;
-            padding: 15px;
-            background: rgba(15, 23, 42, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            background: rgba(10, 25, 47, 0.7);
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+            gap: 15px;
         }
         
         #user-input {
             flex-grow: 1;
-            padding: 12px 18px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.1);
             border-radius: 30px;
-            color: white;
-            font-size: 1rem;
+            color: var(--lighter);
+            font-size: 1.1rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
         
         #user-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(100, 255, 218, 0.2);
+        }
+        
+        #user-input::placeholder {
+            color: rgba(230, 241, 255, 0.4);
         }
         
         #send-btn {
-            background: #4169e1;
-            color: white;
+            background: var(--accent);
+            color: var(--primary);
             border: none;
             border-radius: 30px;
-            padding: 12px 25px;
-            margin-left: 10px;
+            padding: 0 30px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         #send-btn:hover {
-            background: #5a7dee;
+            background: #7dffe3;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 255, 218, 0.3);
         }
         
         #send-btn:active {
             transform: translateY(1px);
         }
         
-        .controls {
+        /* Breathing Exercise */
+        #breathing-exercise {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 20px 0;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
         
-        .control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        #breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(100, 255, 218, 0.05);
+            border: 2px solid var(--accent);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            margin: 10px auto;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease;
+        }
+        
+        #breathing-text {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--accent);
+            z-index: 2;
+        }
+        
+        .circle-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(100, 255, 218, 0.1);
+            animation: pulse 4s infinite ease-in-out;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+        
+        .breathing-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 20px;
+            text-align: center;
+            background: rgba(10, 25, 47, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(100, 255, 218, 0.1);
             font-size: 0.9rem;
+            color: rgba(230, 241, 255, 0.7);
         }
         
-        .control-btn:hover {
-            background: rgba(65, 105, 225, 0.3);
-            transform: translateY(-2px);
+        .install-btn {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 30px;
+            padding: 10px 25px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
         }
         
+        .install-btn:hover {
+            background: rgba(100, 255, 218, 0.2);
+        }
+        
+        /* Typing Indicator */
         .typing-indicator {
             display: none;
             align-self: flex-start;
-            background: rgba(25, 55, 109, 0.5);
+            background: rgba(25, 55, 109, 0.4);
             padding: 15px;
             border-radius: 18px;
             border-bottom-left-radius: 5px;
+            margin-left: 20px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
         }
         
         .typing-indicator span {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: #e6e6e6;
-            margin: 0 2px;
+            background: var(--accent);
+            margin: 0 3px;
             opacity: 0.4;
             animation: typing 1.4s infinite;
         }
@@ -224,77 +473,160 @@
             30% { transform: translateY(-5px); opacity: 1; }
         }
         
-        .timestamp {
-            font-size: 0.7rem;
-            opacity: 0.6;
-            margin-top: 5px;
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            #app-container {
+                padding: 15px;
+                grid-template-rows: auto auto 1fr auto;
             }
             
-            #content-container {
-                padding: 10px;
+            #sidebar {
+                grid-row: 2;
+                height: auto;
+            }
+            
+            #main-content {
+                grid-row: 3;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            #breathing-circle {
+                width: 150px;
+                height: 150px;
             }
             
             .message {
                 max-width: 90%;
+                padding: 15px;
+                font-size: 1rem;
             }
+        }
+        
+        /* Hide elements when not needed */
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
     <div id="visual-container"></div>
     
-    <div id="content-container">
+    <div id="app-container">
         <header>
-            <h1>LOOM</h1>
-            <p class="tagline">A meditative space for reflection and calm</p>
+            <div class="logo">
+                <div class="logo-icon">☯</div>
+                <h1>LOOM</h1>
+            </div>
+            <p class="tagline">A mindful space for reflection, meditation, and digital serenity</p>
         </header>
         
-        <div id="chat-container">
-            <div id="chat-messages">
-                <div class="message bot-message">
-                    Hello. I'm Loom. How are you feeling today?
-                    <div class="timestamp">Just now</div>
+        <aside id="sidebar">
+            <div class="widget">
+                <h3 class="widget-title">⏱ Meditation Timer</h3>
+                <div id="meditation-timer">
+                    <div id="timer-display">05:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" id="start-timer">Start</button>
+                        <button class="timer-btn" id="reset-timer">Reset</button>
+                    </div>
                 </div>
             </div>
             
-            <div class="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="widget">
+                <h3 class="widget-title">😌 Current Mood</h3>
+                <div class="mood-options">
+                    <div class="mood-option" data-mood="calm">
+                        <div class="mood-icon">😌</div>
+                        <div>Calm</div>
+                    </div>
+                    <div class="mood-option" data-mood="happy">
+                        <div class="mood-icon">😊</div>
+                        <div>Happy</div>
+                    </div>
+                    <div class="mood-option" data-mood="thoughtful">
+                        <div class="mood-icon">🤔</div>
+                        <div>Thoughtful</div>
+                    </div>
+                    <div class="mood-option" data-mood="anxious">
+                        <div class="mood-icon">😰</div>
+                        <div>Anxious</div>
+                    </div>
+                    <div class="mood-option" data-mood="tired">
+                        <div class="mood-icon">😴</div>
+                        <div>Tired</div>
+                    </div>
+                    <div class="mood-option" data-mood="neutral">
+                        <div class="mood-icon">😐</div>
+                        <div>Neutral</div>
+                    </div>
+                </div>
             </div>
             
-            <div id="input-container">
-                <input type="text" id="user-input" placeholder="Share your thoughts...">
-                <button id="send-btn">Send</button>
+            <div class="widget">
+                <h3 class="widget-title">💎 Insights</h3>
+                <div id="insights">
+                    <p>"The present moment is the only moment available to us."</p>
+                    <p style="margin-top: 15px;">"Breathe. Let go. And remind yourself that this very moment is the only one you know you have for sure."</p>
+                </div>
             </div>
-        </div>
+        </aside>
         
-        <div class="controls">
-            <button class="control-btn" id="reset-btn">
-                <span>🔄</span> Reset Conversation
-            </button>
-            <button class="control-btn" id="sound-btn">
-                <span>🔊</span> Sound On
-            </button>
-            <button class="control-btn" id="visual-btn">
-                <span>🌈</span> Visuals On
-            </button>
-        </div>
+        <main id="main-content">
+            <div id="chat-container">
+                <div id="chat-messages">
+                    <div class="message bot-message">
+                        Welcome to Loom. I'm here to listen without judgment. How are you feeling in this moment?
+                        <div class="timestamp">Just now</div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                
+                <div id="input-container">
+                    <input type="text" id="user-input" placeholder="Share your thoughts or feelings...">
+                    <button id="send-btn">Send <span>➤</span></button>
+                </div>
+            </div>
+            
+            <div id="breathing-exercise">
+                <h3 class="widget-title">🌬 Breathing Exercise</h3>
+                <p>Follow the rhythm to calm your mind and body</p>
+                <div id="breathing-circle">
+                    <div id="breathing-text">Breathe In</div>
+                    <div class="circle-pulse"></div>
+                </div>
+                <div class="breathing-controls">
+                    <button class="timer-btn" id="start-breathing">Start</button>
+                    <button class="timer-btn" id="stop-breathing">Stop</button>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Loom is designed to help you find moments of peace in your digital life</p>
+            <button class="install-btn" id="install-btn">⬇️ Install Loom App</button>
+            <p>© 2023 Loom Meditation. All rights reserved.</p>
+        </footer>
     </div>
     
     <script>
-        // Visuals using Canvas API
-        const canvas = document.createElement('canvas');
+        // Enhanced Visual Experience
         const visualContainer = document.getElementById('visual-container');
+        const canvas = document.createElement('canvas');
         visualContainer.appendChild(canvas);
         const ctx = canvas.getContext('2d');
         
-        // Set canvas dimensions
         function resizeCanvas() {
             canvas.width = visualContainer.clientWidth;
             canvas.height = visualContainer.clientHeight;
@@ -303,7 +635,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
         
-        // Particle system for visuals
+        // Particle system with improved visuals
         class Particle {
             constructor() {
                 this.reset();
@@ -315,8 +647,8 @@
                 this.y = Math.random() * canvas.height;
                 this.vx = (Math.random() - 0.5) * 0.8;
                 this.vy = (Math.random() - 0.5) * 0.8;
-                this.alpha = Math.random() * 0.5 + 0.1;
-                this.color = `hsla(${Math.random() * 360}, 70%, 60%, ${this.alpha})`;
+                this.alpha = Math.random() * 0.4 + 0.1;
+                this.color = `hsla(${170 + Math.random() * 60}, 70%, 60%, ${this.alpha})`;
                 this.life = Math.random() * 300 + 100;
             }
             
@@ -325,7 +657,7 @@
                 this.y += this.vy;
                 this.life--;
                 
-                // Add some organic movement with Perlin-like noise
+                // Organic movement
                 this.vx += (Math.random() - 0.5) * 0.1;
                 this.vy += (Math.random() - 0.5) * 0.1;
                 
@@ -356,8 +688,8 @@
                             ctx.beginPath();
                             ctx.moveTo(this.x, this.y);
                             ctx.lineTo(particle.x, particle.y);
-                            ctx.strokeStyle = `hsla(${Math.random() * 360}, 60%, 70%, ${0.1 * (1 - dist/150)})`;
-                            ctx.lineWidth = 0.5;
+                            ctx.strokeStyle = `hsla(170, 60%, 70%, ${0.1 * (1 - dist/150)})`;
+                            ctx.lineWidth = 0.8;
                             ctx.stroke();
                         }
                     }
@@ -367,7 +699,7 @@
         
         // Create particles
         const particles = [];
-        const particleCount = 50;
+        const particleCount = 80;
         
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
@@ -375,11 +707,9 @@
         
         // Animation loop
         function animate() {
-            // Semi-transparent background for motion blur effect
-            ctx.fillStyle = 'rgba(10, 15, 30, 0.05)';
+            ctx.fillStyle = 'rgba(10, 25, 47, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Update and draw particles
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
@@ -390,130 +720,210 @@
         
         animate();
         
-        // Chatbot functionality
+        // DOM Elements
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const soundBtn = document.getElementById('sound-btn');
-        const visualBtn = document.getElementById('visual-btn');
         const typingIndicator = document.querySelector('.typing-indicator');
+        const startTimerBtn = document.getElementById('start-timer');
+        const resetTimerBtn = document.getElementById('reset-timer');
+        const timerDisplay = document.getElementById('timer-display');
+        const moodOptions = document.querySelectorAll('.mood-option');
+        const breathingCircle = document.getElementById('breathing-circle');
+        const breathingText = document.getElementById('breathing-text');
+        const startBreathingBtn = document.getElementById('start-breathing');
+        const stopBreathingBtn = document.getElementById('stop-breathing');
+        const installBtn = document.getElementById('install-btn');
         
-        // Sound setup
-        let audioContext;
-        let oscillator;
-        let soundOn = false;
+        // Meditation Timer
+        let timerInterval;
+        let timerRunning = false;
+        let timerSeconds = 300; // 5 minutes
         
-        function initSound() {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.value = 220;
-                gainNode.gain.value = 0.02;
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.start();
-                
-                // Slowly modulate frequency for ambient effect
-                setInterval(() => {
-                    oscillator.frequency.setValueAtTime(
-                        200 + Math.sin(Date.now() / 5000) * 50, 
-                        audioContext.currentTime
-                    );
-                }, 100);
-                
-                // Start muted
-                toggleSound();
-            } catch (e) {
-                console.log("Web Audio API not supported:", e);
-                soundBtn.style.display = 'none';
-            }
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
         }
         
-        function toggleSound() {
-            soundOn = !soundOn;
-            soundBtn.innerHTML = soundOn ? '<span>🔊</span> Sound On' : '<span>🔇</span> Sound Off';
+        function startTimer() {
+            if (timerRunning) return;
             
-            if (audioContext) {
-                if (soundOn) {
-                    audioContext.resume();
-                } else {
-                    audioContext.suspend();
+            timerRunning = true;
+            startTimerBtn.textContent = 'Pause';
+            
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                timerDisplay.textContent = formatTime(timerSeconds);
+                
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    startTimerBtn.textContent = 'Start';
+                    addMessage("Your meditation session is complete. How do you feel now?", false);
+                    // Play completion sound
+                    if (audioContext && soundOn) {
+                        playCompletionSound();
+                    }
                 }
+            }, 1000);
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerSeconds = 300;
+            timerDisplay.textContent = formatTime(timerSeconds);
+            startTimerBtn.textContent = 'Start';
+        }
+        
+        startTimerBtn.addEventListener('click', () => {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startTimerBtn.textContent = 'Resume';
+            } else {
+                startTimer();
+            }
+        });
+        
+        resetTimerBtn.addEventListener('click', resetTimer);
+        
+        // Mood Tracking
+        moodOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                moodOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                const mood = option.dataset.mood;
+                const moodMap = {
+                    'calm': 'calm and peaceful',
+                    'happy': 'happy and content',
+                    'thoughtful': 'thoughtful and reflective',
+                    'anxious': 'anxious or worried',
+                    'tired': 'tired or fatigued',
+                    'neutral': 'neutral or balanced'
+                };
+                
+                addMessage(`I'm feeling ${moodMap[mood]} right now.`, true);
+                setTimeout(() => {
+                    addMessage(`I appreciate you sharing that. How is your ${mood} state affecting your current thoughts?`, false);
+                }, 1500);
+            });
+        });
+        
+        // Breathing Exercise
+        let breathingInterval;
+        let breathingActive = false;
+        let breathPhase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
+        
+        function startBreathing() {
+            if (breathingActive) return;
+            
+            breathingActive = true;
+            breathingCircle.style.transform = 'scale(1)';
+            breathPhase = 0;
+            updateBreathing();
+            
+            breathingInterval = setInterval(updateBreathing, 4000);
+        }
+        
+        function stopBreathing() {
+            breathingActive = false;
+            clearInterval(breathingInterval);
+            breathingCircle.style.transform = 'scale(1)';
+            breathingText.textContent = 'Breathe In';
+        }
+        
+        function updateBreathing() {
+            switch(breathPhase) {
+                case 0: // Inhale
+                    breathingText.textContent = 'Breathe In';
+                    breathingCircle.style.transform = 'scale(1.2)';
+                    breathPhase = 1;
+                    break;
+                case 1: // Hold after inhale
+                    breathingText.textContent = 'Hold';
+                    breathPhase = 2;
+                    break;
+                case 2: // Exhale
+                    breathingText.textContent = 'Breathe Out';
+                    breathingCircle.style.transform = 'scale(0.8)';
+                    breathPhase = 3;
+                    break;
+                case 3: // Hold after exhale
+                    breathingText.textContent = 'Hold';
+                    breathPhase = 0;
+                    break;
             }
         }
         
-        // Visual toggle
-        let visualsOn = true;
+        startBreathingBtn.addEventListener('click', startBreathing);
+        stopBreathingBtn.addEventListener('click', stopBreathing);
         
-        function toggleVisuals() {
-            visualsOn = !visualsOn;
-            visualBtn.innerHTML = visualsOn ? '<span>🌈</span> Visuals On' : '<span>🌑</span> Visuals Off';
-            visualContainer.style.opacity = visualsOn ? '0.7' : '0';
-        }
-        
-        // Chat responses
+        // Enhanced Chatbot
         const responses = {
             greeting: [
-                "Hello. I'm Loom. How are you feeling today?",
-                "Welcome to this space. What's on your mind?",
-                "I'm here to listen. How are you doing?"
+                "Welcome. I'm here to listen without judgment. How are you feeling in this moment?",
+                "Hello. This space is for you. What's present for you right now?",
+                "I'm here. Take a deep breath and share what's on your mind."
             ],
             positive: [
-                "That's wonderful to hear. Joy is a beautiful state to inhabit.",
-                "I can feel your positivity radiating. Hold onto that light.",
-                "Moments like these are precious. What's bringing you this happiness?",
-                "Your contentment is palpable. Savor this feeling."
+                "That's beautiful to hear. Joy can be such a gentle teacher. What's bringing you this sense of contentment?",
+                "I sense your positivity. How might you nurture this feeling throughout your day?",
+                "Moments of happiness are precious. Can you describe the sensations you're experiencing?",
+                "Your contentment is palpable. What's the source of this peace you're feeling?"
             ],
             negative: [
-                "I'm here with you in this moment. Difficult feelings are part of the journey.",
-                "This too shall pass. Would you like to share more about what's troubling you?",
-                "I sense your discomfort. Remember, even storms eventually clear.",
-                "Thank you for sharing that. What do you need right now?"
+                "I'm here with you. Difficult emotions are part of the human experience. Would you like to explore this feeling more deeply?",
+                "Thank you for sharing that. Remember, emotions are like weather patterns - they come and go. What do you need in this moment?",
+                "I sense your discomfort. Can you describe where you feel this in your body?",
+                "This too shall pass, but right now, I'm here to sit with you in this feeling."
             ],
             reflective: [
-                "What do you think is the source of that feeling?",
-                "How does that resonate with your deeper self?",
-                "Our emotions are like clouds passing through the sky of consciousness.",
-                "Can you sit with that feeling without judgment for a moment?",
-                "Notice how that thought arises and passes. What remains?"
+                "What do you notice arising within you as you share this?",
+                "How does this resonate with your deeper understanding of yourself?",
+                "Our thoughts are like clouds passing through the sky of awareness. What do you observe?",
+                "Can you sit with that feeling without judgment for just a moment? What do you notice?"
             ],
             existential: [
-                "We're stardust contemplating itself. Isn't that remarkable?",
-                "Existence precedes essence. What does that mean to you?",
-                "In the vastness of the cosmos, this moment is uniquely yours.",
-                "The present is all that truly exists. How are you experiencing it now?",
-                "What does it mean to be alive in this particular moment?"
+                "We're the universe experiencing itself. How does that feel to contemplate?",
+                "What does it mean to you to be alive in this particular moment of time?",
+                "In the grand scheme, this moment is both insignificant and everything. How does that resonate?",
+                "What does presence mean to you in this fleeting existence?"
             ],
             nature: [
-                "Nature moves at its own pace, unconcerned with human worries.",
-                "Imagine roots growing from your feet, connecting you to the earth.",
-                "The changing seasons remind us that nothing is permanent.",
-                "Can you hear the rhythm of your breath, like waves on a shore?"
+                "Imagine yourself as a mountain - grounded, stable, observing the changing weather of emotions.",
+                "Consider the trees - they don't rush their growth, yet they reach incredible heights.",
+                "The changing seasons remind us that nothing is permanent. How does that land for you?",
+                "Can you hear the rhythm of your breath, like waves on a shore? Each one unique."
+            ],
+            mindful: [
+                "Bring your attention to your breath. Notice the sensation of air entering and leaving your body.",
+                "Can you name three things you're sensing right now? Sight, sound, touch?",
+                "When was the last time you truly listened to the silence between sounds?",
+                "Try gently resting your awareness on the space between your thoughts."
             ],
             default: [
-                "That's interesting. Tell me more.",
                 "I'm listening. Please continue.",
-                "What else comes to mind when you reflect on that?",
-                "How does that make you feel in this moment?",
-                "Let's explore that thought together."
+                "What else comes to mind as you reflect on that?",
+                "How does that resonate in your body right now?",
+                "Let's explore that thought together, without judgment.",
+                "What's the next layer beneath that thought?"
             ]
         };
         
-        // Sentiment analysis (simple pattern matching)
+        // Sentiment analysis
         function analyzeSentiment(text) {
             text = text.toLowerCase();
             
-            const positiveWords = ['good', 'great', 'happy', 'joy', 'love', 'excited', 'calm', 'peace', 'grateful'];
-            const negativeWords = ['bad', 'sad', 'angry', 'stressed', 'anxious', 'depressed', 'tired', 'hurt', 'lonely'];
+            const positiveWords = ['good', 'great', 'happy', 'joy', 'love', 'excited', 'calm', 'peace', 'grateful', 'content', 'relaxed'];
+            const negativeWords = ['bad', 'sad', 'angry', 'stressed', 'anxious', 'depressed', 'tired', 'hurt', 'lonely', 'overwhelmed', 'fear'];
+            const mindfulWords = ['breathe', 'present', 'moment', 'now', 'aware', 'meditate', 'mindful', 'observe', 'notice'];
             
             let positiveCount = 0;
             let negativeCount = 0;
+            let mindfulCount = 0;
             
             positiveWords.forEach(word => {
                 if (text.includes(word)) positiveCount++;
@@ -523,6 +933,11 @@
                 if (text.includes(word)) negativeCount++;
             });
             
+            mindfulWords.forEach(word => {
+                if (text.includes(word)) mindfulCount++;
+            });
+            
+            if (mindfulCount > 2) return 'mindful';
             if (positiveCount > negativeCount) return 'positive';
             if (negativeCount > positiveCount) return 'negative';
             return 'neutral';
@@ -534,10 +949,10 @@
             const now = new Date();
             const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
-            // Sometimes ask reflective questions
-            if (Math.random() > 0.7) {
+            // Sometimes suggest mindfulness
+            if (Math.random() > 0.8) {
                 return {
-                    text: responses.reflective[Math.floor(Math.random() * responses.reflective.length)],
+                    text: responses.mindful[Math.floor(Math.random() * responses.mindful.length)],
                     timestamp
                 };
             }
@@ -569,6 +984,13 @@
             if (sentiment === 'negative') {
                 return {
                     text: responses.negative[Math.floor(Math.random() * responses.negative.length)],
+                    timestamp
+                };
+            }
+            
+            if (sentiment === 'mindful') {
+                return {
+                    text: responses.mindful[Math.floor(Math.random() * responses.mindful.length)],
                     timestamp
                 };
             }
@@ -622,11 +1044,78 @@
             }, 1500 + Math.random() * 1500);
         }
         
-        // Reset conversation
-        function resetConversation() {
-            chatMessages.innerHTML = '';
-            addMessage("Let's begin anew. How are you feeling in this moment?");
+        // Sound system
+        let audioContext;
+        let oscillator;
+        let soundOn = true;
+        
+        function initSound() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 220;
+                gainNode.gain.value = 0.02;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                
+                // Slowly modulate frequency for ambient effect
+                setInterval(() => {
+                    oscillator.frequency.setValueAtTime(
+                        200 + Math.sin(Date.now() / 5000) * 50, 
+                        audioContext.currentTime
+                    );
+                }, 100);
+            } catch (e) {
+                console.log("Web Audio API not supported:", e);
+            }
         }
+        
+        function playCompletionSound() {
+            if (!audioContext) return;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.value = 440;
+            gain.gain.value = 0.1;
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.start();
+            
+            // Fade out
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.5);
+            osc.stop(audioContext.currentTime + 1.5);
+        }
+        
+        // PWA Installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-flex';
+        });
+        
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.textContent = '✓ App Installed';
+                    installBtn.disabled = true;
+                }
+                deferredPrompt = null;
+            }
+        });
         
         // Event listeners
         sendBtn.addEventListener('click', handleUserMessage);
@@ -637,47 +1126,42 @@
             }
         });
         
-        resetBtn.addEventListener('click', resetConversation);
-        soundBtn.addEventListener('click', toggleSound);
-        visualBtn.addEventListener('click', toggleVisuals);
-        
         // Initialize
         window.addEventListener('load', () => {
             initSound();
             
             // Add initial bot message after a pause
             setTimeout(() => {
-                addMessage("This space is yours. There's no rush. Just breathe.");
+                addMessage("Notice your breath as you read this. There's no rush. This space is just for you.");
             }, 3000);
-        });
-        
-        // PWA functionality
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
+            
+            // Service Worker Registration
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('service-worker.js')
                     .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        console.log('Service Worker registered with scope:', registration.scope);
                     })
                     .catch(error => {
-                        console.log('ServiceWorker registration failed: ', error);
+                        console.log('Service Worker registration failed:', error);
                     });
-            });
-        }
+            }
+        });
         
-        // Create manifest
+        // Create manifest dynamically
         const manifest = {
-            "name": "Loom",
+            "name": "Loom Meditation",
             "short_name": "Loom",
-            "description": "A meditative space for reflection and calm",
+            "description": "A mindful space for reflection, meditation, and digital serenity",
             "start_url": "/",
             "display": "standalone",
-            "background_color": "#1a1a2e",
-            "theme_color": "#1a1a2e",
+            "background_color": "#0a192f",
+            "theme_color": "#0a192f",
             "icons": [
                 {
                     "src": "icon-192.png",
                     "sizes": "192x192",
-                    "type": "image/png"
+                    "type": "image/png",
+                    "purpose": "any maskable"
                 },
                 {
                     "src": "icon-512.png",
@@ -687,8 +1171,11 @@
             ]
         };
         
-        // For GitHub Pages, you'll need to create actual icon files and a service-worker.js file
-        // This code is ready to be placed in your index.html file
+        // Create manifest link
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type: 'application/json'}));
+        document.head.appendChild(manifestLink);
     </script>
 </body>
 </html>
