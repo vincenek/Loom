@@ -458,6 +458,51 @@
             transform: translateY(-2px);
         }
         
+        /* Journal Entries */
+        .journal-entries {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(10, 25, 47, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .entry-date {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        
+        .entry-content {
+            padding: 10px 0;
+            white-space: pre-wrap;
+        }
+        
+        .journal-entry {
+            padding: 15px;
+            background: rgba(10, 25, 47, 0.4);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .no-entries {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.6;
+            font-style: italic;
+        }
+        
         /* Footer */
         footer {
             padding: 15px;
@@ -714,7 +759,7 @@
         
         <!-- Breathing Tab -->
         <div id="breathing-tab" class="tab-content">
-            <div class="breathing-container">
+            <div class="breathing-container" id="breathing-container">
                 <div class="meditation-header">
                     <div class="meditation-title">
                         <span>🌬️</span> Breathing Exercise
@@ -730,6 +775,7 @@
                 <div class="breathing-controls">
                     <button class="timer-btn" id="start-breathing">Start</button>
                     <button class="timer-btn" id="stop-breathing">Stop</button>
+                    <button class="timer-btn" id="reset-breathing">Reset</button>
                 </div>
                 
                 <div class="breathing-instructions">
@@ -751,6 +797,10 @@
                 <textarea id="journal-text" placeholder="What's on your mind today? What are you grateful for?"></textarea>
                 
                 <button class="journal-btn" id="save-journal">Save Reflection</button>
+                
+                <div class="journal-entries" id="journal-entries">
+                    <!-- Journal entries will appear here -->
+                </div>
                 
                 <div class="journal-tips">
                     <p>Journaling prompts:</p>
@@ -899,14 +949,18 @@
         const timer10min = document.getElementById('10-min');
         const startBreathingBtn = document.getElementById('start-breathing');
         const stopBreathingBtn = document.getElementById('stop-breathing');
+        const resetBreathingBtn = document.getElementById('reset-breathing');
         const saveJournalBtn = document.getElementById('save-journal');
         const journalText = document.getElementById('journal-text');
+        const journalEntries = document.getElementById('journal-entries');
         const installBtn = document.getElementById('install-btn');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const installPrompt = document.getElementById('installPrompt');
         const closePrompt = document.getElementById('closePrompt');
         const offlineIndicator = document.getElementById('offlineIndicator');
+        const breathingCircle = document.getElementById('breathing-circle');
+        const breathingText = document.getElementById('breathing-text');
         
         // Tab Navigation
         tabs.forEach(tab => {
@@ -924,6 +978,11 @@
                         content.classList.add('active');
                     }
                 });
+                
+                // Load journal entries when journal tab is opened
+                if (tabId === 'journal') {
+                    loadJournalEntries();
+                }
             });
         });
         
@@ -993,16 +1052,18 @@
         let breathingInterval;
         let breathingActive = false;
         let breathPhase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
+        let breathCount = 0;
+        const breathPattern = [4, 4, 6, 2]; // inhale, hold, exhale, hold durations
         
         function startBreathing() {
             if (breathingActive) return;
             
             breathingActive = true;
-            breathingCircle.style.transform = 'scale(1)';
             breathPhase = 0;
+            breathCount = 0;
             updateBreathing();
             
-            breathingInterval = setInterval(updateBreathing, 4000);
+            breathingInterval = setInterval(updateBreathing, breathPattern[0] * 1000);
         }
         
         function stopBreathing() {
@@ -1012,54 +1073,161 @@
             breathingText.textContent = 'Breathe In';
         }
         
+        function resetBreathing() {
+            stopBreathing();
+            breathCount = 0;
+            document.querySelector('.breath-count').textContent = `Breaths: 0`;
+        }
+        
         function updateBreathing() {
+            // Update circle animation based on phase
             switch(breathPhase) {
                 case 0: // Inhale
                     breathingText.textContent = 'Breathe In';
                     breathingCircle.style.transform = 'scale(1.2)';
-                    breathPhase = 1;
                     break;
                 case 1: // Hold after inhale
                     breathingText.textContent = 'Hold';
-                    breathPhase = 2;
+                    breathingCircle.style.transform = 'scale(1.2)';
                     break;
                 case 2: // Exhale
                     breathingText.textContent = 'Breathe Out';
                     breathingCircle.style.transform = 'scale(0.8)';
-                    breathPhase = 3;
                     break;
                 case 3: // Hold after exhale
                     breathingText.textContent = 'Hold';
-                    breathPhase = 0;
+                    breathingCircle.style.transform = 'scale(0.8)';
                     break;
             }
+            
+            // Move to next phase
+            breathPhase = (breathPhase + 1) % 4;
+            
+            // If we completed a full breath cycle
+            if (breathPhase === 0) {
+                breathCount++;
+                document.querySelector('.breath-count').textContent = `Breaths: ${breathCount}`;
+            }
+            
+            // Update interval for next phase
+            clearInterval(breathingInterval);
+            breathingInterval = setInterval(updateBreathing, breathPattern[breathPhase] * 1000);
         }
         
         startBreathingBtn.addEventListener('click', startBreathing);
         stopBreathingBtn.addEventListener('click', stopBreathing);
+        resetBreathingBtn.addEventListener('click', resetBreathing);
         
-        // Journal Saving
-        saveJournalBtn.addEventListener('click', () => {
+        // Add breath counter to breathing container
+        const breathCounter = document.createElement('div');
+        breathCounter.className = 'breath-count';
+        breathCounter.textContent = 'Breaths: 0';
+        breathCounter.style.marginTop = '10px';
+        breathCounter.style.fontSize = '1.1rem';
+        breathCounter.style.color = 'var(--accent)';
+        document.querySelector('.breathing-instructions').appendChild(breathCounter);
+        
+        // Journal Saving and Display
+        function saveJournalEntry() {
             const text = journalText.value.trim();
             if (!text) {
                 alert('Please write something before saving!');
                 return;
             }
             
-            // Save to localStorage
-            const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
-            entries.push({
+            // Create journal entry
+            const entry = {
                 id: Date.now(),
                 content: text,
                 date: new Date().toISOString()
-            });
+            };
             
+            // Save to localStorage
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || []);
+            entries.push(entry);
             localStorage.setItem('journalEntries', JSON.stringify(entries));
             
-            // Show confirmation
-            alert('Journal entry saved successfully!');
+            // Add to display
+            addJournalEntry(entry);
+            
+            // Clear input
             journalText.value = '';
-        });
+            
+            // Show confirmation
+            showToast('Journal entry saved!');
+        }
+        
+        function loadJournalEntries() {
+            journalEntries.innerHTML = '';
+            const entries = JSON.parse(localStorage.getItem('journalEntries') || []);
+            
+            if (entries.length === 0) {
+                journalEntries.innerHTML = '<div class="no-entries">No journal entries yet. Start your reflection journey!</div>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Add entries to display
+            entries.forEach(entry => {
+                addJournalEntry(entry);
+            });
+        }
+        
+        function addJournalEntry(entry) {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'journal-entry';
+            
+            const date = new Date(entry.date);
+            const formattedDate = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            entryDiv.innerHTML = `
+                <div class="entry-header">
+                    <div class="entry-date">${formattedDate}</div>
+                </div>
+                <div class="entry-content">${entry.content}</div>
+            `;
+            
+            journalEntries.prepend(entryDiv);
+        }
+        
+        saveJournalBtn.addEventListener('click', saveJournalEntry);
+        
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = 'var(--accent)';
+            toast.style.color = 'var(--primary)';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '30px';
+            toast.style.zIndex = '1000';
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '1';
+            }, 10);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
         
         // Context-Aware Chatbot
         const conversationContext = {
@@ -1403,6 +1571,9 @@
                         console.log('Service Worker registration failed:', error);
                     });
             }
+            
+            // Load journal entries if any
+            loadJournalEntries();
         });
     </script>
 </body>
